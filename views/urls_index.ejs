@@ -1,29 +1,37 @@
-
 <!DOCTYPE html>
+<style type="text/css">
+form, table {
+     display:inline;
+     margin:0px;
+     padding:0px;
+}
+</style>
 <html lang="en">
 <head>
-  <title>TinyApp: Homepage</title>
+  <title>TinyApp</title>
 </head>
-
-
-
 <body>
-  <header>
     <% include partials/_header %>
-  </header>
-    <ul>
-      <li><%= "shortURL:" + " " + shortURL %></li>
-        <form method="POST" action="/urls/<%=shortURL%>">
-          <label for="longURL">Update URL: </label>
-          <input id="longURL" type="text" name="longURL" placeholder="<%= link %>" style ="width:300px">
-          <input type="submit" value="update">
-        </form>
-    </ul>
-      <a href="/urls">Would you like your url shortened?</a>
-
+    <% if (!user_id) { %>
+      <p> You need to be logged in to see the URLs </p>
+    <% } else { %>
+    <h3>Your URLs</h3>
+      <ul>
+        <% for(var shortURL in urls[user_id]) { %>
+          <li><%= shortURL + ': ' + urls[user_id][shortURL] %>
+          <form method="POST" action= <%= `/urls/${shortURL}/delete?_method=DELETE` %> >
+            <a href= "<%= `/urls/${shortURL}` %>" > Edit</a>
+            <input type="submit" value="Delete This URL">
+          </form>
+          <p> <%= `Visits to this URL: ${visitCounts[shortURL]}` %> </p>
+          <p> <%= `Date created: ${creationDates[shortURL]}` %> </p>
+          <a href="<%= `/u/${shortURL}` %>">Visit URL</a>
+          </li>
+        <% } %>
+      </ul>
+      <p></p>
+      <a href="/urls/new">Create new short link</a>
+    <% } %>
 
 </body>
 </html>
-
-
-

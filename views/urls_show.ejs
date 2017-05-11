@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>TinyApp: Show URLs</title>
+  <title>Show URL</title>
 </head>
 <body>
-  <header>
     <% include partials/_header %>
-    </header>
-    <ul>
-        <li><%= "shortURL:" + " " + shortURL %></li>
-        <form method="POST" action="/urls/<%=shortURL%>">
-          <label for="longURL">Update URL: </label>
-          <input id="longURL" type="text" name="longURL" placeholder="<%= link %>" style ="width:300px">
-          <input type="submit" value="update">
-        </form>
-    </ul>
-      <a href="/urls">Would you like your URL shortened?</a>
+    <% if (!user_id) { %>
+      <p> You need to be logged in to see the URLs </p>
+    <% } else { %>
+      <% let longURL = urls[user_id][shortURL] %>
+      <p> <%= `Short URL: ${shortURL}` %> </p>
+      <p> <%= `Visits to this URL: ${visitCounts[shortURL]}` %> </p>
+      <p> <%= `Date created: ${creationDates[shortURL]}` %> </p>
+      <% for (visitor in visits[shortURL]) { %>
+        <p> <%= `Visitor: ${visitor}`  %> </p>
+        <p> <%= `Times: ${visits[shortURL][visitor]}` %> </p>
+      <% } %>
+      <p><%= `Current long URL: ${longURL}` %> </p>
+      <form method="POST" action= <%= `/urls/${shortURL}` %> >
+          <input type="text" name = "newURL" placeholder= "New URL">
+          <input type="submit" name="Submit">
+      </form>
+    <% } %>
+    <p>`Visit URL: localhost:3000/u/${shortURL}`</p>
 </body>
 </html>
-
-
-
-
-
