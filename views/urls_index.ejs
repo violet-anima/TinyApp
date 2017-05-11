@@ -1,37 +1,23 @@
 <!DOCTYPE html>
-<style type="text/css">
-form, table {
-     display:inline;
-     margin:0px;
-     padding:0px;
-}
-</style>
 <html lang="en">
 <head>
   <title>TinyApp</title>
 </head>
 <body>
+  <header>
     <% include partials/_header %>
-    <% if (!user_id) { %>
-      <p> You need to be logged in to see the URLs </p>
-    <% } else { %>
-    <h3>Your URLs</h3>
-      <ul>
-        <% for(var shortURL in urls[user_id]) { %>
-          <li><%= shortURL + ': ' + urls[user_id][shortURL] %>
-          <form method="POST" action= <%= `/urls/${shortURL}/delete?_method=DELETE` %> >
-            <a href= "<%= `/urls/${shortURL}` %>" > Edit</a>
-            <input type="submit" value="Delete This URL">
-          </form>
-          <p> <%= `Visits to this URL: ${visitCounts[shortURL]}` %> </p>
-          <p> <%= `Date created: ${creationDates[shortURL]}` %> </p>
-          <a href="<%= `/u/${shortURL}` %>">Visit URL</a>
-          </li>
-        <% } %>
-      </ul>
-      <p></p>
-      <a href="/urls/new">Create new short link</a>
-    <% } %>
-
+    </header>
+    <ul>
+      <% Object.keys(urls).forEach(function(key) { %>
+      <li><a href="<%= urls[key].longURL%>"><%= urls[key].longURL%> </a> --> <%=[key] %></li>
+        <form method="GET" action="/urls/<%=[key]%>">
+          <input type="submit" value="update">
+        </form>
+        <form method="POST" action="/urls/<%=[key]%>/delete">
+          <input type="submit" value="delete">
+        </form>
+        <% }); %>
+    </ul>
+  <a href="/urls/new">URL Shortener</a>
 </body>
 </html>
