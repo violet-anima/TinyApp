@@ -1,3 +1,15 @@
+// Root Path
+// API - lists all urls in JSON
+// SCRUD - Search
+// URLS => SCRUD - Create
+// URLS => SCRUD - Read: shows individual urls
+// URLS => SCRUD - Update
+// URLS => SCRUD - Delete
+// USERS => SCRUD - Create Users
+// USERS => Logging
+// SERVER => Listening
+
+
 
 const express      = require("express");
 const app          = express();
@@ -5,6 +17,7 @@ let PORT           = process.env.PORT || 8080; // default port 8080
 const cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
+
 
 function generateRandomString() {
   var text = "";
@@ -16,7 +29,7 @@ function generateRandomString() {
   return text;
 }
 
-var random = generateRandomString();
+let random = generateRandomString();
 
 
 const bodyParser = require("body-parser");
@@ -174,6 +187,8 @@ app.post('/urls/:id', (req, res) => {
 });
 
 
+// SERVER => Listening
+
 app.listen(PORT, () => {
-  console.log(`TinyApp app listening on port ${PORT}!`);
+  console.log(`TinyApp is listening on port ${PORT}!`);
 });
