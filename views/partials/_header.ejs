@@ -1,5 +1,14 @@
+
 <header>
   <title>TinyApp</title>
+    <style>
+      body {background-color: powderblue;}
+      ul, li {
+      font-family: verdana, sans-serif;
+      font-size: 110%;
+      }
+    </style>
+
   <% if (locals.user) { %>
     Welcome, <%= user.email %> !
     <form action="urls/logout" method="POST">

@@ -1,43 +1,43 @@
 // Root Path
 // API - lists all urls in JSON
 // SCRUD - Search
-// URLS => SCRUD - Create
-// URLS => SCRUD - Read: shows individual urls
-// URLS => SCRUD - Update
-// URLS => SCRUD - Delete
-// USERS => SCRUD - Create Users
-// USERS => Logging
-// SERVER => Listening
+// URLS - Create
+// URLS - Read: shows individual urls
+// URLS - Update
+// URLS - Delete
+// USERS - Create Users
+// USERS - Logging
+// SERVER - Listening
 
 
 
-const express      = require("express");
-const app          = express();
-let PORT           = process.env.PORT || 8080; // default port 8080
-const cookieParser = require('cookie-parser');
+const express        = require("express");
+const app            = express();
+let PORT             = process.env.PORT || 8080; // default port is 8080
+const cookieParser   = require("cookie-parser");
+const bodyParser     = require("body-parser");
 
+
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 
 function generateRandomString() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let text = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for( var i=0; i < 6; i++ )
+  for( let i = 0; i < 6; i++ )
     text += possible.charAt(Math.floor(Math.random() * possible.length));
-
   return text;
 }
 
 let random = generateRandomString();
 
 
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": {
   longURL:"http://www.lighthouselabs.ca",
   shortURL:"b2xVn2",
@@ -92,9 +92,9 @@ app.get("/urls/new", (req, res) => {
   user:users[req.cookies['user_id']],
   }
   if (users[req.cookies['user_id']] === undefined){
-  res.redirect("/urls");
+    res.redirect("/urls");
   } else {
-  res.render("urls_new", templateVars);
+    res.render("urls_new", templateVars);
 }
 });
 
@@ -102,7 +102,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     link: urlDatabase[req.params.id].longURL,
-    user:users[req.cookies['user_id']]
+    user:users[req.cookies["user_id"]]
     };
   res.render("urls_show", templateVars);
 });
@@ -125,7 +125,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.post('/register', (req, res) => {
+app.post("/register", (req, res) => {
   var random = generateRandomString();
   var authenticated = true;
   newObj = {};
@@ -138,22 +138,22 @@ app.post('/register', (req, res) => {
         authenticated = false;
       }
     }
-  if (req.body.email === '' || req.body.password === '') {
+  if (req.body.email === "" || req.body.password === "") {
     authenticated = false;
     }
     if (authenticated) {
       users[random] = newObj;
-      res.cookie('user_id', random);
+      res.cookie("user_id", random);
       res.redirect("/urls");
       console.log(users);
     } else {
       res.statusCode = 400
-      res.send('400');
+      res.send("400");
       }
     }
 });
 
-app.post('/login', (req, res) => {
+app.post("/login", (req, res) => {
   var loggedIn = false;
   if (!loggedIn) {
     for(i in users){
@@ -161,33 +161,33 @@ app.post('/login', (req, res) => {
         loggedIn = true
     }
     if (loggedIn) {
-      res.cookie('user_id', users[i].id);
-      res.redirect('/urls');
+      res.cookie("user_id", users[i].id);
+      res.redirect("/urls");
       console.log(users[i].id);
     } else {
       res.statusCode = 403;
-      res.send('403');
+      res.send("403");
     }
   }
 });
 
-app.post('/urls/logout', (req, res) => {
-  res.clearCookie('user_id');
-  res.redirect('/urls');
+app.post("/urls/logout", (req, res) => {
+  res.clearCookie("user_id");
+  res.redirect("/urls");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-  res.redirect('/urls');
+  res.redirect("/urls");
 });
 
-app.post('/urls/:id', (req, res) => {
+app.post("/urls/:id", (req, res) => {
   urlDatabase[req.params.id] = req.body.longURL;
-  res.redirect('/urls/' + req.params.id);
+  res.redirect("/urls/" + req.params.id);
 });
 
 
-// SERVER => Listening
+// SERVER - Listening
 
 app.listen(PORT, () => {
   console.log(`TinyApp is listening on port ${PORT}!`);
