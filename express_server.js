@@ -34,7 +34,6 @@ function generateRandomString() {
 let random = generateRandomString();
 
 
-
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -148,7 +147,7 @@ app.post("/register", (req, res) => {
       console.log(users);
     } else {
       res.statusCode = 400
-      res.send("400");
+      res.send("This email is already registered");
       }
     }
 });
@@ -166,8 +165,8 @@ app.post("/login", (req, res) => {
       console.log(users[i].id);
     } else {
       res.statusCode = 403;
-      res.send("403");
-    }
+      res.send("403.  Problem with email and/or password.");
+   }
   }
 });
 
