@@ -10,10 +10,10 @@
     </style>
   <% if (locals.user) { %>
     Welcome, <%= user.email %> !
-    <form action="urls/logout" method="POST">
+    <form action="/urls/logout" method="POST">
       <button type="submit">Logout</button>
     </form>
   <% } else { %>
-      <a href="/register">Register</a>  <a href="/login">Login</a></form>
+    <a href="/register">Register</a>  <a href="/login">Login</a></form>
   <% } %>
 </header>
