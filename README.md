@@ -4,7 +4,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-<img width="1280" alt="urls new pic" src="https://cloud.githubusercontent.com/assets/22466500/26025299/a37f805e-37a1-11e7-9c1e-e133c77a24af.png">
+<img width="1280" alt="screen shot 2017-05-13 at 6 12 53 am" src="https://cloud.githubusercontent.com/assets/22466500/26025372/601c1d8e-37a3-11e7-8211-59e18eb4a7ec.png">
 
 <img width="1280" alt="urls index pic" src="https://cloud.githubusercontent.com/assets/22466500/26025298/a1510348-37a1-11e7-83ca-109e9aee78c5.png">
 
