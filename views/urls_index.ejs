@@ -19,7 +19,7 @@
     <ul>
       <% Object.keys(urls).forEach(function(key) { %>
         <li>
-          <a href="<%= urls[key].longURL%>"><%= urls[key].longURL%> </a> --> <%=[key] %>
+          <a href="<%= urls[key].longURL%>"> <%= urls[key].longURL%> </a> --> <%=[key] %>
         </li>
           <form method="GET" action="/urls/<%=[key]%>">
             <input type="submit" value="update">
