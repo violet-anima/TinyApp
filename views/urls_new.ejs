@@ -2,20 +2,22 @@
 <html lang="en">
   <head>
     <style>
-      body {background-color: powderblue;}
+      body {
+        background-color: powderblue;
+      }
       ul, li {
         font-family: verdana, sans-serif;
         font-size: 110%;
       }
     </style>
   </head>
-  <body style="font-size:25px; padding:50px;">
+  <body style="font-size:30px; padding:50px;">
     <% include partials/_header %>
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter the URL you'd like to shorten:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="include http:// or https://" style="width: 300px">
-      <input type="submit" value="Submit">
-    </form>
+      <form action="/urls" method="POST" style="margin:100px;">
+        <label for="longURL">Enter the URL you'd like to shorten:</label>
+        <input id="longURL" type="text" name="longURL" placeholder="include http:// or https://" style="width: 300px">
+        <input type="submit" value="Submit">
+      </form>
     <ul>
       <a href="/urls">Current List of Shortened URLs</a>
     </ul>

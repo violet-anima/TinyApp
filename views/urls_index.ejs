@@ -3,26 +3,30 @@
 <head>
   <title>TinyApp</title>
   <style>
-    body {background-color: powderblue;}
+    body {
+      background-color: powderblue;
+    }
     ul, li {
       font-family: verdana, sans-serif;
       font-size: 110%;
     }
   </style>
 </head>
-<body>
+  <body style="font-size:25px; padding:50px;">
   <header>
     <% include partials/_header %>
-    </header>
+  </header>
     <ul>
       <% Object.keys(urls).forEach(function(key) { %>
-      <li><a href="<%= urls[key].longURL%>"><%= urls[key].longURL%> </a> --> <%=[key] %></li>
-        <form method="GET" action="/urls/<%=[key]%>">
-          <input type="submit" value="update">
-        </form>
-        <form method="POST" action="/urls/<%=[key]%>/delete">
-          <input type="submit" value="delete">
-        </form>
+        <li>
+          <a href="<%= urls[key].longURL%>"><%= urls[key].longURL%> </a> --> <%=[key] %>
+        </li>
+          <form method="GET" action="/urls/<%=[key]%>">
+            <input type="submit" value="update">
+          </form>
+          <form method="POST" action="/urls/<%=[key]%>/delete">
+            <input type="submit" value="delete">
+          </form>
         <% }); %>
     </ul>
   <a href="/urls/new">Wanna Shorten some URLs?</a>
