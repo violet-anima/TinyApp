@@ -8,7 +8,6 @@ const cookieSession  = require("cookie-session");
 
 //----------MIDDLEWARE----------//
 app.set("view engine", "ejs");
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: "session",
@@ -87,7 +86,7 @@ app.get("/urls", (req, res) => {
 app.get("/login", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user:users[req.session.user_id]
+    user: users[req.session.user_id]
   };
   res.render("urls_login", templateVars);
 });
@@ -96,7 +95,7 @@ app.get("/login", (req, res) => {
 //-------Retrieves URL Shortener-------//
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-  user:users[req.session.user_id],
+  user: users[req.session.user_id],
   };
   if (users[req.session.user_id] === undefined){
     res.redirect("/urls");
@@ -111,7 +110,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     link: urlDatabase[req.params.id].longURL,
-    user:users[req.session.user_id]
+    user: users[req.session.user_id]
     };
   res.render("urls_show", templateVars);
 });
@@ -120,7 +119,7 @@ app.get("/urls/:id", (req, res) => {
 //-------Creates New Shortened URL-------//
 app.post("/urls", (req, res) => {
   let random = generateRandomString();
-  newObj = {};
+  let newObj = {};
   newObj.user_id = req.session.user_id;
   newObj.shortURL = random;
   newObj.longURL = req.body.longURL;
@@ -141,66 +140,65 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user:users[req.session.user_id]
+    user: users[req.session.user_id]
+
   };
   res.render("urls_register", templateVars);
 });
 
 
 //-------Registers New User and Assigns Unique ID-------//
+
 app.post("/register", (req, res) => {
-  let random = generateRandomString();
-  let authenticated = true;
-  newObj = {};
-  newObj.id = random;
-  newObj.email = req.body.email;
-  newObj.password = bcrypt.hashSync(req.body.password, 10);
-  if (authenticated) {
+    let newObj = {};
+    let random = generateRandomString();
+    newObj.password = req.body.password;
+    newObj.id = random;
+    newObj.email = req.body.email;
+
+  if (req.body.email === "" || req.body.password === "") {
+      res.send("400.  Please enter an email and password.");
+  } else {
+    let authenticated;
     for(let i in users) {
       if (users[i].email === req.body.email) {
-        authenticated = false;
-      }
-  } if (req.body.email === "" || newObj.password === "") {
-    authenticated = false;
-  } if (authenticated) {
-      users[random] = newObj;
-      res.session("user_id", random);
-      res.redirect("/urls");
-  } else {
-      res.statusCode = 400
-      res.send("400.  This email is already registered.");
-      }
-    }
-});
-
-
-//-------Login-------//
-app.post("/login", (req, res) => {
-  if(!req.body.email || !req.body.password){
-    res.send("400.  Bad Request.  Password and/or Email is incorrect.");
-  } else {
-    let foundUser;
-    for(let i in users){
-      if (req.body.email === users[i].email && bcrypt.compareSync(users[i].password, req.body.password) {
-        foundUser = true;
-        //req.session might not work//
-        req.session("user_id", users[i].id);
-        res.redirect("/urls");
-        console.log(users[i].id);
-      } else if (foundUser == undefined) {
-        res.statusCode = 403;
-        res.send("403.  Password and/or Email is incorrect.");
+        res.statusCode = 400
+        res.send("400.  This email is already registered.");
+      } else{
+          authenticated = true;
+          users[random] = newObj;
+          req.session.user_id = users[i].id;
+          console.log(req.session.user_id);
+          res.redirect("/urls");
         }
       }
     }
 });
 
 
+
+//-------Login-------//
+app.post("/login", (req, res) => {
+  req.session.user_id = undefined;
+  let encryPass = bcrypt.hashSync(req.body.password, 10);
+    let foundUser;
+    for(let i in users){
+      if (req.body.email === users[i].email && bcrypt.compareSync(req.body.password, encryPass)) {
+        foundUser = true;
+        req.session.user_id = users[i].id;
+        res.redirect("/urls");
+      } else if (foundUser == undefined) {
+        res.statusCode = 403;
+        res.send("403.  Password and/or Email is incorrect.");
+        }
+      }
+
+});
+
+
 //-------Logout-------//
 app.post("/urls/logout", (req, res) => {
   req.session = undefined;
-//  delete req.cookie.user_id;
-//  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -208,7 +206,7 @@ app.post("/urls/logout", (req, res) => {
 //-------Deletes URLs-------//
 app.post("/urls/:id/delete", (req, res) => {
   let templateVars = {
-    user:users[req.session.user_id],
+    user: users[req.session.user_id],
   }
   if (users[req.session.user_id] === undefined){
     res.redirect("/urls");
@@ -228,5 +226,7 @@ app.post("/urls/:id", (req, res) => {
 
 //-------LISTENS-------//
 app.listen(PORT, () => {
-  console.log(`TinyApp is listening on port ${PORT}.  Awesomeness and Marsupials await!`);
+  console.log(`TinyApp is listening on port ${PORT}!`);
 });
+
+
