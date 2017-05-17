@@ -71,15 +71,43 @@ function urlsForUser(id) {
 }
 
 
-//-------SEARCH: Displays URLs-------//
-
-app.get("/urls", (req, res) => {
+//-------READ: Redirects to Display URLs-------//
+app.get("/", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_id]
   };
-  res.render("urls_index", templateVars);
+  res.redirect("urls_index", templateVars);
 });
+
+
+//-------SEARCH: Displays URLs-------//
+
+app.get("/urls", (req, res) => {
+
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.session.user_id]
+  };
+
+for(let i in users){
+  var loggedIn = (req.body.email === users[i].email &&
+                  bcrypt.compareSync(req.body.password, encryPass)
+};
+
+
+  if (loggedIn == undefined) {
+  res.redirect("/urls_login");
+
+//  res.render("urls_index", templateVars);
+}});
+
+
+
+
+
+
+
 
 
 //-------Retrieves login page-------//
