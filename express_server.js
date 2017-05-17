@@ -17,16 +17,7 @@ app.use(cookieSession({
 
 //-------DATABASES-------//
 let urlDatabase = {
-  "b2xVn2": {
-    longURL:"http://www.lighthouselabs.ca",
-    shortURL:"b2xVn2",
-    user_id:"6DwtSg"
-  },
-  "9sm5xK": {
-    longURL:"http://www.google.com",
-    shortURL:"9sm5xK",
-    user_id:"h5DF3s"
-  }
+
 };
 
 const users = {
@@ -41,6 +32,18 @@ const users = {
     password: "dishwasher-funk"
   }
 };
+
+
+//-------ROUTE PATH-------//
+app.get("/", (req, res)=> {
+
+   let templateVars = {
+    urls: urlDatabase,
+    user: users[req.session.user_id]
+  };
+  res.render("urls_login", templateVars);
+})
+
 
 
 //-------GETS POSTS-------//
@@ -71,47 +74,37 @@ function urlsForUser(id) {
 }
 
 
-//-------READ: Redirects to Display URLs-------//
-app.get("/", (req, res) => {
-  let templateVars = {
-    urls: urlDatabase,
-    user: users[req.session.user_id]
-  };
-  res.redirect("urls_index", templateVars);
-});
-
 
 //-------SEARCH: Displays URLs-------//
-
 app.get("/urls", (req, res) => {
 
-  let templateVars = {
-    urls: urlDatabase,
-    user: users[req.session.user_id]
+  if(!users[req.session.user_id]){
+
+    res.redirect("/");
+  }
+
+  let urls = {
   };
 
-for(let i in users){
-  var loggedIn = (req.body.email === users[i].email &&
-                  bcrypt.compareSync(req.body.password, encryPass)
-};
+  let keys = Object.keys(urlDatabase);
+  keys = keys.forEach(key=> {
+    if(urlDatabase[key].user_id === req.session.user_id) {
+       urls[key] = urlDatabase[key];
+    }
+  })
 
-
-  if (loggedIn == undefined) {
-  res.redirect("/urls_login");
-
-//  res.render("urls_index", templateVars);
-}});
-
-
-
-
-
-
-
+  let templateVars = {
+    urls: urls,
+    user: users[req.session.user_id]
+  };
+  res.render("urls_index", templateVars);
+});
 
 
 //-------Retrieves login page-------//
 app.get("/login", (req, res) => {
+
+
   let templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_id]
@@ -140,6 +133,7 @@ app.get("/urls/:id", (req, res) => {
     link: urlDatabase[req.params.id].longURL,
     user: users[req.session.user_id]
     };
+
   res.render("urls_show", templateVars);
 });
 
@@ -153,6 +147,7 @@ app.post("/urls", (req, res) => {
   newObj.longURL = req.body.longURL;
   urlDatabase[random] = newObj;
   let newURL = random;
+
   res.redirect("urls/" + newURL);
 });
 
@@ -178,49 +173,60 @@ app.get("/register", (req, res) => {
 //-------Registers New User and Assigns Unique ID-------//
 
 app.post("/register", (req, res) => {
-    let newObj = {};
-    let random = generateRandomString();
-    newObj.password = req.body.password;
-    newObj.id = random;
-    newObj.email = req.body.email;
+  let newObj = {};
+  let random = generateRandomString();
+  newObj.password = bcrypt.hashSync(req.body.password, 10);
+  console.log("Hashed password is "+ newObj.password );
 
-  if (req.body.email === "" || req.body.password === "") {
-      res.send("400.  Please enter an email and password.");
-  } else {
-    let authenticated;
-    for(let i in users) {
-      if (users[i].email === req.body.email) {
-        res.statusCode = 400
-        res.send("400.  This email is already registered.");
-      } else{
-          authenticated = true;
-          users[random] = newObj;
-          req.session.user_id = users[i].id;
-          console.log(req.session.user_id);
-          res.redirect("/urls");
-        }
-      }
+  newObj.id = random;
+  newObj.email = req.body.email;
+
+  if(req.body.email === "" || req.body.password === "") {
+     res.send("400, Please enter an email and password.");
+  }
+  let keys = Object.keys(users);
+
+  let loggedIn = true;
+  keys.forEach( key=> {
+    if(users[key].email === req.body.email) {
+      loggedIn = false;
     }
-});
+  })
 
+  if(loggedIn) {
+    users[random] = newObj;
+    req.session.user_id = users[random].id;
+    res.redirect("/urls");
+  } else {
+    res.statusCode = 400
+    res.send("400.  This email is already registered.");
+  }
+})
 
 
 //-------Login-------//
 app.post("/login", (req, res) => {
   req.session.user_id = undefined;
   let encryPass = bcrypt.hashSync(req.body.password, 10);
-    let foundUser;
-    for(let i in users){
-      if (req.body.email === users[i].email && bcrypt.compareSync(req.body.password, encryPass)) {
-        foundUser = true;
-        req.session.user_id = users[i].id;
-        res.redirect("/urls");
-      } else if (foundUser == undefined) {
-        res.statusCode = 403;
-        res.send("403.  Password and/or Email is incorrect.");
-        }
-      }
 
+  let userLogged = false;
+  let keys = Object.keys(users);
+  let userId = "";
+
+  keys.forEach(key => {
+     if (req.body.email === users[key].email && bcrypt.compareSync(req.body.password, encryPass)){
+        userLogged  = true;
+        userId = key;
+     }
+  })
+
+  if(userLogged) {
+     req.session.user_id = users[userId].id;
+    res.redirect("/urls");
+  } else{
+    res.statusCode = 403;
+        res.send("403.  Password and/or Email is incorrect.");
+  }
 });
 
 

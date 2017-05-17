@@ -12,13 +12,7 @@
       }
     </style>
   <% if (locals.user) { %>
-
-
     Welcome, <%= user.email %> !
-
-
-
-
     <form action="/urls/logout" method="POST">
       <button type="submit">Logout</button>
     </form>
